@@ -1,6 +1,7 @@
 ---
 import Container from '@/components/Container.astro'
 import Link from '@/components/Link.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
 import { NAV_LINKS } from '@/consts'
 import Logo from './Logo.astro'
@@ -32,6 +33,7 @@ import Logo from './Logo.astro'
             ))
           }
         </nav>
+        <ThemeToggle />
         <MobileMenu client:load transition:persist />
       </div>
     </div>
