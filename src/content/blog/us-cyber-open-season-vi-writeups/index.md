@@ -8,7 +8,7 @@ tags: ['ctf-writeups']
 authors: ['seth']
 ---
 
-Writeups from **US Cyber Open Season VI**. Each challenge has its own page.
+Writeups I wrote while competing in the 2026 US Cyber Open.
 
 ## Web Exploitation
 
