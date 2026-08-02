@@ -8,34 +8,16 @@ tags: ['ctf-writeups']
 authors: ['seth']
 ---
 
-
 [← US Cyber Open Season VI Writeups](/blog/us-cyber-open-season-vi-writeups)
 
-![image.png](./image-114.png "20rem")
+![image.png](./image-114.png '20rem')
 
 This one was pretty straightforward. Just looking through the pcap you can see the packet where the device identifying as an iPhone sends the PIN (`47193820`):
 
-![image.png](./image-115.png "100%")
+![image.png](./image-115.png '100%')
 
 Submit that to the service and that’s it!
 
-![image.png](./image-116.png "32rem")
+![image.png](./image-116.png '32rem')
 
 Flag: `SVIUSCG{aa192e8178bf6adf492aff298218885c}`
-
-
-Place: 20th/533
-
-Here was the scoreboard at the end of the competition:
-
-![image.png](./image-117.png "36rem")
-
-![image.png](./image-118.png "100%")
-
-![image.png](./image-119.png "100%")
-
-![image.png](./image-120.png "12rem")
-
-![image.png](./image-121.png "100%")
-
-![image.png](./image-122.png "100%")

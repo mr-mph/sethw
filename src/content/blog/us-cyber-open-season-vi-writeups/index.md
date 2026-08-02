@@ -9,6 +9,7 @@ authors: ['seth']
 ---
 
 Writeups I wrote while competing in the 2026 US Cyber Open.
+Note: This was a relatively low-LLM use CTF since gemma-4-31b-it was the best model we could use.
 
 ## Web Exploitation
 
