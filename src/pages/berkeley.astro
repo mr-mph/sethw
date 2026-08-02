@@ -3,19 +3,6 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Container from '@/components/Container.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
-
-const links = [
-  {
-    href: 'https://eecstime.sethw.dev',
-    title: 'EECSTime',
-    description: 'Find courses and plan your schedule with ease.',
-  },
-  {
-    href: 'https://berkeley-intros.sethw.dev',
-    title: 'Berkeley Intros',
-    description: 'Find who at Berkeley you share interests with.',
-  },
-]
 ---
 
 <Layout title="Berkeley" description="Tools and links for Berkeley students.">
@@ -35,32 +22,58 @@ const links = [
       </p>
 
       <ul class="not-prose flex flex-col pt-2">
-        {
-          links.map((link) => (
-            <li>
-              <Link
-                href={link.href}
-                external
-                class="group flex items-center justify-between gap-3 border-b border-border py-4 transition-colors last:border-b-0"
-              >
-                <span class="flex flex-col gap-0.5">
-                  <span class="text-base font-medium text-foreground">
-                    {link.title}
-                  </span>
-                  <span class="text-sm text-muted-foreground">
-                    {link.description}
-                  </span>
-                  <span class="text-xs text-muted-foreground/80">
-                    {link.href.replace('https://', '')}
-                  </span>
-                </span>
-                <span class="text-muted-foreground transition-transform group-hover:translate-x-0.5">
-                  &rarr;
-                </span>
-              </Link>
-            </li>
-          ))
-        }
+        <li class="border-b border-border py-4">
+          <Link
+            href="https://eecstime.sethw.dev"
+            external
+            class="group flex items-center justify-between gap-3"
+          >
+            <span class="text-base font-medium text-foreground">EECSTime</span>
+            <span
+              class="text-muted-foreground transition-transform group-hover:translate-x-0.5"
+            >
+              &rarr;
+            </span>
+          </Link>
+          <p class="pt-0.5 text-sm text-muted-foreground">
+            Find courses and plan your schedule with ease. Full list of
+            improvements from Berkeleytime{' '}
+            <Link
+              href="https://github.com/mr-mph/eecstime/blob/main/README.md"
+              external
+              underline
+              class="text-foreground"
+            >
+              here
+            </Link>.
+          </p>
+          <span class="text-xs text-muted-foreground/80">
+            eecstime.sethw.dev
+          </span>
+        </li>
+        <li class="py-4">
+          <Link
+            href="https://berkeley-intros.sethw.dev"
+            external
+            class="group flex items-center justify-between gap-3"
+          >
+            <span class="text-base font-medium text-foreground"
+              >Berkeley Intros</span
+            >
+            <span
+              class="text-muted-foreground transition-transform group-hover:translate-x-0.5"
+            >
+              &rarr;
+            </span>
+          </Link>
+          <p class="pt-0.5 text-sm text-muted-foreground">
+            Find who at Berkeley you share interests with. Built from the
+            #introduce-yourself channels of UC Berkeley discords.
+          </p>
+          <span class="text-xs text-muted-foreground/80">
+            berkeley-intros.sethw.dev
+          </span>
+        </li>
       </ul>
     </section>
   </Container>
