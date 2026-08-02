@@ -1,0 +1,13 @@
+---
+import { Image } from 'astro:assets'
+import me from '@/assets/images/me.jpeg'
+---
+
+<Image
+  src={me}
+  alt="seth"
+  width={56}
+  height={56}
+  densities={[1, 2]}
+  class="size-7 rounded-full object-cover object-[50%_20%] ring-1 ring-border transition-opacity hover:opacity-90"
+/>

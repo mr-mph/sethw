@@ -1,0 +1,40 @@
+---
+import Footer from '@/components/Footer.astro'
+import Head from '@/components/Head.astro'
+import Header from '@/components/Header.astro'
+import { SITE } from '@/consts'
+
+type Props = {
+  title: string
+  description: string
+  image?: string
+}
+
+const { title, description, image } = Astro.props
+const pageTitle = title === 'Home' ? SITE.TITLE : `${title} | ${SITE.TITLE}`
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head title={pageTitle} description={description} image={image} />
+
+    <script
+      defer
+      is:inline
+      data-domain={import.meta.env.DOMAIN}
+      src={`${import.meta.env.ANALYTICS_URL}/js/script.outbound-links.tagged-events.js`}
+    ></script>
+  </head>
+  <body>
+    <div
+      class="box-border flex h-fit min-h-screen flex-col gap-y-4 font-sans antialiased"
+    >
+      <Header />
+      <main class="flex-grow">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

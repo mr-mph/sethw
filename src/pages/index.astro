@@ -1,0 +1,152 @@
+---
+import me from '@/assets/images/me.jpeg'
+import BlogCard from '@/components/BlogCard.astro'
+import Container from '@/components/Container.astro'
+import Link from '@/components/Link.astro'
+import { buttonVariants } from '@/components/ui/button'
+import { SITE } from '@/consts'
+import Layout from '@/layouts/Layout.astro'
+import { isTopLevelPost } from '@/lib/blog'
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+
+const blog = (await getCollection('blog'))
+  .filter((post) => !post.data.draft && isTopLevelPost(post))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE)
+---
+
+<Layout title="Home" description={SITE.DESCRIPTION}>
+  <Container class="flex flex-col items-center">
+    <div class="flex w-full max-w-[400px] flex-col gap-y-6">
+      <section class="flex flex-col gap-y-3">
+        <Image
+          src={me}
+          alt="Seth"
+          width={400}
+          class="w-full"
+          densities={[1, 2]}
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="space-y-1">
+          <h1 class="text-2xl font-semibold tracking-tight">Hi! I'm Seth</h1>
+          <p class="text-base leading-snug text-primary">
+            Incoming{' '}
+            <Link
+              href="https://eecs.berkeley.edu/"
+              class="text-foreground"
+              external
+              underline>EECS</Link
+            >{' '} | building robots & hacking computers
+          </p>
+        </div>
+      </section>
+
+      <Link
+        href="/berkeley"
+        class="group flex w-full items-center justify-between gap-3 border-y border-border py-2.5 text-sm transition-colors hover:text-foreground"
+      >
+        <span class="text-muted-foreground group-hover:text-foreground">
+          Are you a Berkeley student? Click here
+        </span>
+        <span
+          class="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
+          >&rarr;</span
+        >
+      </Link>
+
+      <section class="flex flex-col gap-y-1.5">
+        <h2 class="text-xl font-bold">Robotics</h2>
+        <p class="text-base leading-snug text-primary">
+          In high school, I led{' '}
+          <Link
+            href="https://ftcscout.org/teams/12516"
+            class="text-foreground"
+            external
+            underline
+          >
+            ONWARD{' '}
+            <img
+              src="/static/onward.svg"
+              alt=""
+              class="mx-0.5 inline-block h-[0.9em] w-auto align-[-0.05em]"
+            />
+          </Link>, my FTC team.
+        </p>
+        <p class="text-base leading-snug text-primary">
+          ▶ Check out our{' '}
+          <Link
+            href="https://drive.google.com/drive/folders/1gGZle4FtXWPF3jiFwC2LZwxVyS1eVb2b?usp=sharing"
+            class="text-foreground"
+            external
+            underline>engineering portfolios</Link
+          >
+        </p>
+      </section>
+
+      <section class="flex flex-col gap-y-1.5">
+        <h2 class="text-xl font-bold">Cybersec</h2>
+        <p class="text-base leading-snug text-primary">
+          I'm on the{' '}
+          <Link
+            href="https://www.uscybergames.com/season-5-team"
+            class="text-foreground"
+            external
+            underline
+          >
+            US Cyber Team{' '}
+            <img
+              src="https://www.uscybergames.com/hubfs/USCyberGames/USCG-Season2/Official_Logos/USCG_S2_logo_REGISTERED-light.svg"
+              alt=""
+              class="mx-0.5 inline-block h-[0.9em] w-auto align-[-0.05em]"
+            />
+          </Link>
+        </p>
+        <p class="text-base leading-snug text-primary">
+          I previously led the{' '}
+          <Link
+            href="https://0xf1.sh/"
+            class="text-foreground"
+            external
+            underline
+          >
+            0xf1sh{' '}
+            <img
+              src="/static/0xf1sh.svg"
+              alt=""
+              class="mx-0.5 inline-block h-[0.9em] w-auto align-[-0.05em]"
+            />
+          </Link>{' '}
+          CTF team.
+        </p>
+      </section>
+
+      {
+        blog.length > 0 && (
+          <section class="flex flex-col gap-y-3 pt-2">
+            <h2 class="text-xl font-bold">Latest posts</h2>
+            <ul class="not-prose flex flex-col gap-y-3">
+              {blog.map((post) => (
+                <li>
+                  <BlogCard entry={post} />
+                </li>
+              ))}
+            </ul>
+            <div class="flex justify-center">
+              <Link
+                href="/blog"
+                class={buttonVariants({ variant: 'ghost' }) + ' group'}
+              >
+                See all posts{' '}
+                <span class="ml-1.5 transition-transform group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </Link>
+            </div>
+          </section>
+        )
+      }
+    </div>
+  </Container>
+</Layout>

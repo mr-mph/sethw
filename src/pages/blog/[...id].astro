@@ -1,0 +1,230 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import Link from '@/components/Link.astro'
+import PostNavigation from '@/components/PostNavigation.astro'
+import ScrollTop from '@/components/ScrollTop.astro'
+import { badgeVariants } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import VisitorCount from '@/components/VisitorCount'
+import Layout from '@/layouts/Layout.astro'
+import { isTopLevelPost } from '@/lib/blog'
+import { parseAuthors } from '@/lib/server-utils'
+import { formatDate, isLongArticle, readingTime } from '@/lib/utils'
+import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
+import { type CollectionEntry, getCollection, render } from 'astro:content'
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog'))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: post,
+  }))
+}
+type Props = CollectionEntry<'blog'>
+
+const allPosts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title))
+
+function navigationSetFor(id: string): Props[] {
+  if (isTopLevelPost({ id } as Props)) {
+    return allPosts
+      .filter(isTopLevelPost)
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  }
+  const series = id.split('/')[0]
+  return allPosts.filter(
+    (post) => post.id.startsWith(`${series}/`) && post.id !== series,
+  )
+}
+
+function getPrevPost(id: string): Props | null {
+  const posts = navigationSetFor(id)
+  const postIndex = posts.findIndex((post) => post.id === id)
+  return postIndex > 0 ? posts[postIndex - 1] : null
+}
+
+function getNextPost(id: string): Props | null {
+  const posts = navigationSetFor(id)
+  const postIndex = posts.findIndex((post) => post.id === id)
+  return postIndex !== -1 && postIndex < posts.length - 1
+    ? posts[postIndex + 1]
+    : null
+}
+
+const currentPostId = Astro.params.id!
+const nextPost = getNextPost(currentPostId)
+const prevPost = getPrevPost(currentPostId)
+
+const post = Astro.props
+const { Content } = await render(post)
+
+const authors = await parseAuthors(post.data.authors ?? [])
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.image?.src ?? '/static/twitter-card.jpeg'}
+>
+  <section
+    class="grid grid-cols-[minmax(0px,1fr)_min(768px,100%)_minmax(0px,1fr)] gap-y-6 *:px-4"
+  >
+    <Breadcrumbs
+      items={[
+        { href: '/blog', label: 'Blog', icon: 'lucide:archive' },
+        { label: post.data.title, icon: 'lucide:file-text' },
+      ]}
+      class="col-start-2"
+    />
+    {
+      post.data.image && (
+        <Image
+          src={post.data.image}
+          alt={post.data.title}
+          width={1200}
+          height={630}
+          class="col-span-full mx-auto h-48 w-full max-w-[1000px] object-cover md:h-56"
+        />
+      )
+    }
+    <section class="col-start-2 flex flex-col gap-y-6 text-center">
+      <div class="flex flex-col gap-y-4">
+        <h1 class="text-4xl font-bold leading-tight sm:text-5xl">
+          {post.data.title}
+        </h1>
+
+        <div
+          class="flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground"
+        >
+          {
+            authors.length > 0 && (
+              <>
+                <div class="flex items-center gap-x-2">
+                  {authors.map((author) => (
+                    <div class="flex items-center gap-x-1.5">
+                      <Image
+                        src={author.avatar}
+                        alt={author.name}
+                        width={24}
+                        height={24}
+                        class="rounded-full"
+                      />
+                      {author.isRegistered ? (
+                        <Link
+                          href={`/authors/${author.id}`}
+                          underline
+                          class="text-foreground"
+                        >
+                          <span>{author.name}</span>
+                        </Link>
+                      ) : (
+                        <span>{author.name}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <Separator orientation="vertical" className="h-4" />
+              </>
+            )
+          }
+          <div class="flex items-center gap-2">
+            <span>{formatDate(post.data.date)}</span>
+            <Separator orientation="vertical" className="h-4" />
+            <VisitorCount path={`/${post.collection}/${post.id}`} client:load />
+            <Separator orientation="vertical" className="h-4" />
+            <span class="flex items-center gap-1"
+              ><Icon name="lucide:clock" class="size-3" />{
+                readingTime(post.body!)
+              }</span
+            >
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-center gap-2">
+          {
+            post.data.tags && post.data.tags.length > 0 ? (
+              post.data.tags.map((tag) => (
+                <a
+                  href={`/tags/${tag}`}
+                  class={badgeVariants({ variant: 'secondary' })}
+                >
+                  <Icon name="lucide:hash" class="size-3 -translate-x-0.5" />
+                  {tag}
+                </a>
+              ))
+            ) : (
+              <span class="text-sm text-muted-foreground">
+                No tags available
+              </span>
+            )
+          }
+        </div>
+      </div>
+
+      <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+    </section>
+
+    <article
+      class="prose prose-flexoki blog-content col-start-2 max-w-none dark:prose-invert prose-img:!mx-0 prose-img:h-auto prose-img:w-auto prose-img:max-w-full prose-img:object-contain"
+    >
+      <Content />
+    </article>
+
+    {
+      isLongArticle(post.body!) && (
+        <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+      )
+    }
+  </section>
+
+  <style is:global>
+    /* Per-image max-width encoded in the markdown title attribute, e.g. ![](./x.png "24rem") */
+    .blog-content img[title='12rem'] {
+      max-width: 12rem;
+    }
+    .blog-content img[title='16rem'] {
+      max-width: 16rem;
+    }
+    .blog-content img[title='20rem'] {
+      max-width: 20rem;
+    }
+    .blog-content img[title='24rem'] {
+      max-width: 24rem;
+    }
+    .blog-content img[title='28rem'] {
+      max-width: 28rem;
+    }
+    .blog-content img[title='32rem'] {
+      max-width: 32rem;
+    }
+    .blog-content img[title='36rem'] {
+      max-width: 36rem;
+    }
+    .blog-content img[title='100%'] {
+      max-width: 100%;
+    }
+  </style>
+
+  <script>
+    // Strip sizing titles so they don't show as browser tooltips.
+    function clearImageSizeTitles() {
+      document
+        .querySelectorAll(
+          '.blog-content img[title="12rem"], .blog-content img[title="16rem"], .blog-content img[title="20rem"], .blog-content img[title="24rem"], .blog-content img[title="28rem"], .blog-content img[title="32rem"], .blog-content img[title="36rem"], .blog-content img[title="100%"]',
+        )
+        .forEach((el) => {
+          const img = el as HTMLImageElement
+          img.style.maxWidth = img.getAttribute('title') || ''
+          img.removeAttribute('title')
+        })
+    }
+
+    document.addEventListener('astro:page-load', clearImageSizeTitles)
+    document.addEventListener('astro:after-swap', clearImageSizeTitles)
+  </script>
+
+  <ScrollTop />
+</Layout>
