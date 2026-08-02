@@ -36,7 +36,11 @@ import { Icon } from 'astro-icon/components'
     button.dataset.bound = 'true'
     button.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark')
-      localStorage.setItem('theme', isDark ? 'dark' : 'theme-light')
+      if (isDark) {
+        localStorage.removeItem('theme')
+      } else {
+        localStorage.setItem('theme', 'theme-light')
+      }
     })
   }
 

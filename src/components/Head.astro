@@ -55,18 +55,11 @@ const { title, description, image = '/static/twitter-card.jpeg' } = Astro.props
 
 <script is:inline>
   function setDarkMode(document) {
-    const getThemePreference = () => {
-      if (
-        typeof localStorage !== 'undefined' &&
-        localStorage.getItem('theme')
-      ) {
-        return localStorage.getItem('theme')
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'theme-light'
-    }
-    const isDark = getThemePreference() === 'dark'
+    // Dark is the default. Only honor an explicit light preference.
+    const prefersLight =
+      typeof localStorage !== 'undefined' &&
+      localStorage.getItem('theme') === 'theme-light'
+    const isDark = !prefersLight
 
     document.documentElement.classList.add('disable-transitions')
     document.documentElement.classList[isDark ? 'add' : 'remove']('dark')
@@ -80,9 +73,18 @@ const { title, description, image = '/static/twitter-card.jpeg' } = Astro.props
     })
 
     if (typeof localStorage !== 'undefined') {
+      // Drop legacy "dark" entries so storage only holds a light override.
+      if (localStorage.getItem('theme') === 'dark') {
+        localStorage.removeItem('theme')
+      }
+
       const observer = new MutationObserver(() => {
         const isDark = document.documentElement.classList.contains('dark')
-        localStorage.setItem('theme', isDark ? 'dark' : 'theme-light')
+        if (isDark) {
+          localStorage.removeItem('theme')
+        } else {
+          localStorage.setItem('theme', 'theme-light')
+        }
       })
       observer.observe(document.documentElement, {
         attributes: true,
@@ -92,13 +94,6 @@ const { title, description, image = '/static/twitter-card.jpeg' } = Astro.props
   }
 
   setDarkMode(document)
-
-  if (!window.__themeMediaQueryInitialized) {
-    window.__themeMediaQueryInitialized = true
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => setDarkMode(document))
-  }
 
   document.addEventListener('astro:before-swap', (ev) => {
     // Pass the incoming document to set the theme on it
