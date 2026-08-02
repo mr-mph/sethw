@@ -1,5 +1,6 @@
 ---
 import Container from '@/components/Container.astro'
+import Link from '@/components/Link.astro'
 import { SOCIAL_LINKS } from '@/consts'
 import SocialIcons from './SocialIcons.astro'
 ---
@@ -7,11 +8,20 @@ import SocialIcons from './SocialIcons.astro'
 <footer class="pb-4 pt-12">
   <Container>
     <div
-      class="flex flex-col items-center justify-center gap-y-2 sm:flex-row sm:justify-between"
+      class="flex flex-col items-center justify-center gap-y-3 sm:flex-row sm:justify-between"
     >
-      <div class="flex items-center">
-        <p class="text-center text-sm text-muted-foreground">
+      <div class="flex flex-col items-center gap-y-1 sm:items-start">
+        <p class="text-center text-sm text-muted-foreground sm:text-left">
           &copy; {new Date().getFullYear()} Seth Williams
+        </p>
+        <p class="text-center text-xs text-muted-foreground sm:text-left">
+          Built on{' '}
+          <Link
+            href="https://github.com/jktrn/astro-erudite"
+            class="text-muted-foreground"
+            external
+            underline>Astro Erudite</Link
+          >
         </p>
       </div>
       <SocialIcons links={SOCIAL_LINKS} />
