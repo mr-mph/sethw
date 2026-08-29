@@ -32,7 +32,7 @@ export interface SongData {
 export const SITE: Site = {
   TITLE: "Seth's Site",
   DESCRIPTION:
-    'Seth Williams, incoming EECS student. I build robots and hack computers.',
+    'Seth Williams, EECS @ UC Berkeley. I build robots and hack computers.',
   EMAIL: '',
   NUM_POSTS_ON_HOMEPAGE: 3,
   POSTS_PER_PAGE: 3,
