@@ -17,6 +17,27 @@ const pageTitle = title === 'Home' ? SITE.TITLE : `${title} | ${SITE.TITLE}`
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      is:inline
+      src="https://www.googletagmanager.com/gtag/js?id=G-PJH5YFJHHM"
+    ></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'G-PJH5YFJHHM')
+
+      // View transitions don't reload the page — send a pageview after swaps
+      document.addEventListener('astro:after-swap', () => {
+        gtag('config', 'G-PJH5YFJHHM', {
+          page_path: location.pathname + location.search,
+        })
+      })
+    </script>
     <Head title={pageTitle} description={description} image={image} />
 
     <script
